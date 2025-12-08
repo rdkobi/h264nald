@@ -33,11 +33,24 @@ bool H264NalUnitHeaderParser::GetNalUnitType(const uint8_t* data,
                                              const size_t length,
                                              NalUnitType& naluType) noexcept {
   BitBuffer bitBuffer(data, length);
-  auto naluHeader = ParseNalUnitHeader(&bitBuffer);
-  if (!naluHeader) {
-    return false;
+
+  uint32_t result{};
+  // forbidden_zero_bit  f(1)
+  if (!bitBuffer.ReadBits(1, result)) {
+      return false;
   }
-  naluType = static_cast<NalUnitType>(naluHeader->nal_unit_type);
+
+  // nal_ref_idc  u(2)
+  if (!bitBuffer.ReadBits(2, result)) {
+      return false;
+  }
+
+  // nal_unit_type  u(5)
+  if (!bitBuffer.ReadBits(5, result)) {
+      return false;
+  }
+
+  naluType = static_cast<NalUnitType>(result);
   return true;
 }
 
