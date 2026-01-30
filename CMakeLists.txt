@@ -38,7 +38,10 @@ endif()
 
 # Recurse into source code subdirectories.
 add_subdirectory(src)
+option(BUILD_TOOLS "Build h264 tools" ON)
+if(BUILD_TOOLS)
 add_subdirectory(tools)
+endif()
 option(BUILD_TESTS "Build h264 gtests" ON)
 if(BUILD_TESTS)
   enable_testing()
